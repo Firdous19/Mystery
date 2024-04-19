@@ -15,6 +15,7 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials: any): Promise<any> {
+                console.log(credentials);
                 //credentials.identifier.username to access the creadentials value
                 await connectDatabase();
                 try {
