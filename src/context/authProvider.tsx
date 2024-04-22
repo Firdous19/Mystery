@@ -7,7 +7,7 @@ type AppProps = {
 
 export default function AuthProvider({ children, }: AppProps) {
     return (
-        <SessionProvider>
+        <SessionProvider >
             {children}
         </SessionProvider>
     )
