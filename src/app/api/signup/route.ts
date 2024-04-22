@@ -3,7 +3,6 @@ import connectDatabase from "@/lib/dbConnect";
 import User from "@/models/User.models";
 import bcrypt from "bcryptjs";
 import { sendverificationEmail } from "@/helpers/sendEmail";
-import { SourceCode } from "eslint";
 
 async function generateHashedPasswordAndVerificationExpiryDate(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
