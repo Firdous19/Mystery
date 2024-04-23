@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
             isVerified: true
         });
 
+        console.log("Existing Userr = ", existingUserByUserName)
+
         if (existingUserByUserName) {
             return NextResponse.json({
                 success: false,
@@ -64,6 +66,7 @@ export async function POST(req: NextRequest) {
                 isAcceptingMessage: true,
                 messages: []
             });
+            console.log("NEw User Created ", user)
         }
 
         //Verification Email

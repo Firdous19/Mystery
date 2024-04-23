@@ -34,7 +34,7 @@ const UserSchema: Schema<User> = new Schema({
         type: String,
         required: [true, "Username is required"],
         trim: true,
-        unique: true
+        unique: false
     },
     email: {
         type: String,
