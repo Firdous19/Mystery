@@ -73,6 +73,7 @@ export default function SignInPage() {
         setIsSubmitting(true);
         try {
             const response = await axios.post<ApiResponse>('/api/signup', data);
+            console.log("Response: ", response.data)
             toast({
                 title: "success",
                 description: response.data.message
@@ -168,15 +169,22 @@ export default function SignInPage() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" disabled={isSubmitting}>
+                        <Button className="w-full" type="submit" disabled={isSubmitting}>
                             {
                                 isSubmitting ? (
-                                    <Loader2 className="animate-spin" />
-                                ) : ("Signup")
+                                    <span className="flex items-center"><Loader2 className="animate-spin mr-2" /> Please Wait</span>
+                                ) : (
+                                    "Submit"
+                                )
                             }
                         </Button>
                     </form>
                 </Form>
+            </div>
+            <div className="text-center text-[14.2px]">
+                <p>
+                    Already have an account? <Link className="text-black font-semibold" href="/login">Login</Link>
+                </p>
             </div>
         </div>
     )
