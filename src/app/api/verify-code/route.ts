@@ -29,13 +29,22 @@ export async function POST(req: NextRequest) {
             }, { status: 400 });
         }
 
+        const verifiedUser = await User.findOne({ username: decodedUsername, isVerified: true });
+
+        if (verifiedUser) {
+            return NextResponse.json({
+                success: false,
+                message: "User already verified please sign in to continue"
+            }, { status: 400 });
+        }
+
         const user = await User.findOne({ username: decodedUsername });
 
         if (!user) {
             return NextResponse.json({
                 success: false,
                 message: "User not found"
-            }, { status: 400 });
+            }, { status: 403 });
         }
 
         const isCodeValid = user.verifyCode === verificationCode;
@@ -45,14 +54,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({
                 success: false,
                 message: "Invalid Verification Code"
-            }, { status: 400 });
+            }, { status: 402 });
         }
 
         if (!isCodeNotExpired) {
             return NextResponse.json({
                 success: false,
                 message: "Verification Code has expired please sign up again to get a new code"
-            }, { status: 400 });
+            }, { status: 405 });
         }
 
         user.isVerified = true;
