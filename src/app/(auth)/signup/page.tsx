@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2, Chrome } from "lucide-react";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
 
 
 
@@ -72,6 +73,7 @@ export default function SignInPage() {
     }, [username]);
 
     const onSubmit = async (data: z.infer<typeof signupSchema>) => {
+        console.log("Data: ", data);
         setIsSubmitting(true);
         try {
             const response = await axios.post<ApiResponse>('/api/signup', data);
@@ -95,6 +97,33 @@ export default function SignInPage() {
         } finally {
             setIsSubmitting(false);
         }
+    }
+
+    const signInwithGoogle = async () => {
+        try {
+            setIsSubmitting(true);
+            const response = await signIn('google', {
+                callbackUrl: '/api/auth/callback/google',
+                redirect: false
+            });
+            setIsSubmitting(false);
+
+            toast({
+                title: 'Success',
+                description: 'Successfully signed in with Google',
+            })
+
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>;
+            const errorMessage = axiosError.response?.data.message;
+
+            toast({
+                title: 'Error',
+                description: errorMessage,
+                variant: 'destructive'
+            })
+        }
+
     }
 
     return (
@@ -184,7 +213,7 @@ export default function SignInPage() {
                 </Form>
             </div>
             <div>
-                <Button className="w-full text-center" variant="outline">
+                <Button onClick={signInwithGoogle} type="submit" className="w-full text-center" variant="outline">
                     <Image className="mr-2" width="28" height="28" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" /> Sign in with Google
                 </Button>
             </div>

@@ -63,7 +63,7 @@ export default function SignInPage() {
                 description: "Signed in successfully",
             });
 
-            router.replace('/');
+            router.replace('/dashboard');
 
         } catch (err) {
             console.log("error", error);

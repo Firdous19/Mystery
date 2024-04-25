@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
                     }
 
                     //credentials.password?? todo---
-                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password as string);
 
                     if (!isPasswordCorrect) {
                         console.log("Invalid Credentials");
@@ -88,31 +88,46 @@ export const authOptions: NextAuthOptions = {
             }
             return token
         },
-        // async signIn({ account, profile }) {
-        //     console.log("Account: ", account);
-        //     console.log("Profile: ", profile);
-        //     if (account?.provider === "google") {
-        //         await connectDatabase();
-        //         try {
-        //             let user = await User.findOne({ email: profile?.email });
-        //             if (!user) {
-        //                 user = await User.create({
-        //                     username: profile?.name,
-        //                     email: profile?.email,
-        //                     password: "",
-        //                     verifyCode: null,
-        //                     verifyCodeExpiry: null,
-        //                     isVerified: true,
-        //                     isAcceptingMessages: true,
-        //                 });
-        //             }
-        //             return true;
-        //         } catch (error) {
-        //             console.error("Error in Google Sign In", error);
-        //             return false;
-        //         }
-        //     }
-        //     return false;
-        // },
+        async signIn({ account, profile }) {
+            console.log("Account: ", account);
+            console.log("Profile: ", profile);
+
+            if (account?.provider === "google") {
+                await connectDatabase(); // Ensure this function is working correctly
+
+                try {
+                    let user = await User.findOne({ email: profile?.email });
+                    console.log("User Found: ", user);
+
+                    if (!user) {
+                        user = new User({
+                            username: profile?.name,
+                            email: profile?.email,
+                            isVerified: true,
+                            isAcceptingMessages: true,
+                            password: undefined,
+                            verifyCode: undefined,
+                            verifyCodeExpiry: undefined,
+                            messages: []
+                        });
+
+                        await user.save({ validateBeforeSave: false });
+                        console.log("New User Created: ", user);
+                    }
+
+                    return true; // Return true after handling the Google sign-in
+                } catch (error) {
+                    console.error("Error in Google Sign In", error);
+                    return false; // Return false if there's an error
+                }
+            }
+
+            if (account?.provider === "credentials") {
+                return true; // Return true for other authentication providers
+            }
+
+            return false; // Return false if no provider matches
+        }
+
     }
 }
