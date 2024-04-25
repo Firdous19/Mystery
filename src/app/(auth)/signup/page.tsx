@@ -22,7 +22,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Loader2, Chrome } from "lucide-react";
+import Image from "next/image";
+
 
 
 export default function SignInPage() {
@@ -181,11 +183,18 @@ export default function SignInPage() {
                     </form>
                 </Form>
             </div>
+            <div>
+                <Button className="w-full text-center" variant="outline">
+                    <Image className="mr-2" width="28" height="28" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" /> Sign in with Google
+                </Button>
+            </div>
             <div className="text-center text-[14.2px]">
                 <p>
-                    Already have an account? <Link className="text-black font-semibold" href="/login">Login</Link>
+                    Already have an account? <Link className="text-black font-semibold" href="/signin">Login</Link>
                 </p>
             </div>
         </div>
     )
 }
+
+

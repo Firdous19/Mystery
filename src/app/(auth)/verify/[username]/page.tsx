@@ -21,12 +21,15 @@ import { ToastAction } from "@/components/ui/toast"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 
-export default function VerifyPage({ params }: any) {
+export default function VerifyPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const router = useRouter();
+    const params = useParams<{ username: string }>();
 
+    console.log("Params: ", params)
 
     const form = useForm<z.infer<typeof verifySchema>>({
         resolver: zodResolver(verifySchema),
