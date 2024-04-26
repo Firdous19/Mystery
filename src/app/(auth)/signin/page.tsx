@@ -73,7 +73,7 @@ export default function SignInPage() {
     }
 
     return (
-        <div className="w-[500px] p-10 rounded-md shadow-lg space-y-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="w-[500px] p-10 rounded-md shadow-lg space-y-5 mx-auto mt-12">
             <div className="text-center space-y-2">
                 <h1 className="text-4xl font-bold">Welcome back to True Feedback</h1>
                 <p>Sign in to continue your secret conversations</p>

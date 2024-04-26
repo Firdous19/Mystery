@@ -33,6 +33,7 @@ export default function SignInPage() {
     const [usernameMessage, setUsernameMessage] = useState('');
     const [ischeckingUsername, setIsCheckingUsername] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
     const debounced = useDebounceCallback(setUsername, 300);
     const { toast } = useToast();
@@ -101,12 +102,11 @@ export default function SignInPage() {
 
     const signInwithGoogle = async () => {
         try {
-            setIsSubmitting(true);
+            setIsGoogleSubmitting(true);
             const response = await signIn('google', {
-                callbackUrl: '/api/auth/callback/google',
+                callbackUrl: '/dashboard',
                 redirect: false
             });
-            setIsSubmitting(false);
 
             toast({
                 title: 'Success',
@@ -123,11 +123,15 @@ export default function SignInPage() {
                 variant: 'destructive'
             })
         }
+        finally {
+            setIsGoogleSubmitting(false);
+        }
 
     }
 
+
     return (
-        <div className="w-[500px] p-10 rounded-md shadow-lg space-y-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="w-[500px] p-10 rounded-md shadow-2xl space-y-5 mx-auto mt-12">
             <div className="text-center space-y-2">
                 <h1 className="text-4xl font-bold">Join True Feedback</h1>
                 <p>Sign up to start your anonymous adventure</p>
@@ -214,7 +218,16 @@ export default function SignInPage() {
             </div>
             <div>
                 <Button onClick={signInwithGoogle} type="submit" className="w-full text-center" variant="outline">
-                    <Image className="mr-2" width="28" height="28" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" /> Sign in with Google
+
+                    {
+                        isGoogleSubmitting ? (
+                            <span className="flex items-center"><Loader2 className="animate-spin mr-2" /> Please Wait</span>
+                        ) : (
+                            <span className="flex items-center">
+                                <Image className="mr-2" width="28" height="28" src="https://img.icons8.com/color/48/google-logo.png" alt="google-logo" /> Sign in with Google
+                            </span>
+                        )
+                    }
                 </Button>
             </div>
             <div className="text-center text-[14.2px]">
@@ -222,7 +235,7 @@ export default function SignInPage() {
                     Already have an account? <Link className="text-black font-semibold" href="/signin">Login</Link>
                 </p>
             </div>
-        </div>
+        </div >
     )
 }
 
