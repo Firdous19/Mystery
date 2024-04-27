@@ -9,6 +9,8 @@ export default function Navbar() {
     const user = session?.user as User;
     console.log("User", user);
 
+    console.log("Session", session);
+
     const routes = [
         {
             name: "Home",
@@ -42,7 +44,7 @@ export default function Navbar() {
                 <div>
                     {
                         session && (
-                            <span>Welcome, {user.name}</span>
+                            <span>Welcome, {user.username || user.name}</span>
                         )
                     }
                 </div>

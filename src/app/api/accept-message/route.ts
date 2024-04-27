@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     const user: NextUser = session?.user as NextUser;
 
+    console.log("Accept:: Session: ", session);
+
     if (!session || !session.user) {
         return NextResponse.json({
             success: false,
@@ -19,10 +21,14 @@ export async function POST(req: NextRequest) {
     const UserId = user._id;
     const { acceptMessage } = await req.json();
 
+    console.log("Accept:: User ID: ", acceptMessage);
+
     try {
         const updatedUser = await User.findByIdAndUpdate(UserId, {
             isAcceptingMessage: acceptMessage
         }, { new: true });
+
+        console.log("Updated User: ", updatedUser);
 
         if (!updatedUser) {
             return NextResponse.json({
@@ -35,7 +41,7 @@ export async function POST(req: NextRequest) {
             success: true,
             message: "Message acceptance status updated Successfully",
             user: updatedUser
-        }, { status: 500 });
+        }, { status: 200 });
 
     } catch (error) {
         console.log("Failed to accept user status to accept messages");
@@ -50,6 +56,8 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions)
     const user: NextUser = session?.user as NextUser;
 
+    console.log("Session: ", session);
+
     if (!session || !session.user) {
         console.log();
         return NextResponse.json({
@@ -59,6 +67,8 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = user._id;
+
+    console.log("User ID: ", userId);
 
     try {
         const user = await User.findById(userId);
