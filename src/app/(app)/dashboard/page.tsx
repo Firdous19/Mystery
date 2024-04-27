@@ -13,10 +13,12 @@ import { Message } from "@/models/User.models";
 import { acceptSchemeMessage } from "@/Schemas/acceptMessageSchema";
 import MessageCard from "@/components/MessageCard";
 import { Separator } from "@/components/ui/separator";
+import { RefreshCcw, Loader2 } from "lucide-react";
 
 export default function Page() {
     // const [acceptMessage, setAcceptMessage] = useState(false);
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const { data: session } = useSession();
@@ -73,6 +75,7 @@ export default function Page() {
     const getFetchedMessages = async () => {
         try {
             setIsLoading(true);
+            setIsRefreshing(true);
             const response = await axios.get('/api/get-messages');
             console.log("Response: ", response.data);
             setMessages(response.data.message);
@@ -90,6 +93,7 @@ export default function Page() {
             });
         } finally {
             setIsLoading(false);
+            setIsRefreshing(false);
         }
     }
 
@@ -127,7 +131,21 @@ export default function Page() {
                 />
                 <span>Accept Message: {acceptMessageValue ? "on" : "off"}</span>
             </div>
-            <Separator className="border-5"/>
+            <Separator className="border-5" />
+            <div>
+                <Button
+                    variant={'outline'}
+                    onClick={getFetchedMessages}
+                >
+                    {
+                        isRefreshing ? (
+                            <Loader2 className="animate-spin w-4 h-4" />
+                        ) : (
+                            <RefreshCcw className="w-4 h-4" />
+                        )
+                    }
+                </Button>
+            </div>
             <section>
                 <h2 className="text-lg font-semibold mb-2">Messages</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 mt-5 gap-8">

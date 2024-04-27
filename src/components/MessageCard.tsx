@@ -62,7 +62,7 @@ export default function MessageCard({ message, onMessageDelete }: MessageCardPro
 
     return (
         <Card >
-            <CardHeader>
+            <CardHeader className="space-y-5">
                 <div className="flex justify-between items-center">
                     <CardTitle>{message?.content}</CardTitle>
                     <AlertDialog>
@@ -84,7 +84,7 @@ export default function MessageCard({ message, onMessageDelete }: MessageCardPro
                         </AlertDialogContent>
                     </AlertDialog>
                 </div>
-                <div>
+                <div >
                     <CardDescription>
                         {dayjs(message?.createdAt).format("DD MMMM, YYYY hh:mm A")}
                     </CardDescription>
