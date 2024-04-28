@@ -7,7 +7,7 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
     return (
         <div>
-            <Navbar />
+            {/* <Navbar /> */}
             {children}
         </div>
     );

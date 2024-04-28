@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        'custom': { 'max': '910px' },
+        'max-sm': { 'max': '640px' },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

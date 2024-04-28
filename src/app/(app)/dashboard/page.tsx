@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ApiResponse } from "@/types/apiResponse";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,15 +16,15 @@ import { Separator } from "@/components/ui/separator";
 import { RefreshCcw, Loader2 } from "lucide-react";
 
 export default function Page() {
-    // const [acceptMessage, setAcceptMessage] = useState(false);
     const [isSwitchLoading, setIsSwitchLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const { toast } = useToast();
+
+    //Session Hook to get the user details
     const { data: session } = useSession();
     const user = session?.user as User;
-    console.log("session", session);
-    const { toast } = useToast();
 
     const form = useForm({
         resolver: zodResolver(acceptSchemeMessage)
@@ -32,6 +32,13 @@ export default function Page() {
 
     const { register, watch, setValue } = form;
     const acceptMessageValue = watch("acceptMessage");
+
+    let baseUrl = "";
+    let profileUrl = "";
+    if (typeof window !== 'undefined') {
+        baseUrl = `${window.location.protocol}//${window.location.host}`;
+        profileUrl = `${baseUrl}/me/${user?.username}`;
+    }
 
     const copyToClipBoard = async () => {
         await window.navigator.clipboard.writeText(`http://localhost:3000/feedback/${user?.username}`);
@@ -45,13 +52,10 @@ export default function Page() {
     const handleAcceptMessage = async () => {
         try {
             setIsSwitchLoading(true);
-            const response = await axios.post('/api/accept-message', {
+            const response = await axios.post<ApiResponse>('/api/accept-message', {
                 acceptMessage: !acceptMessageValue
             });
             setValue("acceptMessage", !acceptMessageValue);
-
-            console.log("Response: ", response.data);
-
             toast({
                 title: "Success",
                 description: acceptMessageValue ? "Message Acceptance Turned Off" : "Message Acceptance Turned On",
@@ -59,9 +63,6 @@ export default function Page() {
         } catch (error) {
             const axiosError = error as AxiosError<ApiResponse>;
             const errorMessage = axiosError.response?.data.message || "Failed to update message status";
-
-            console.log("Error: ", errorMessage);
-
             toast({
                 title: "Error",
                 description: errorMessage,
@@ -72,13 +73,38 @@ export default function Page() {
         }
     }
 
-    const getFetchedMessages = async () => {
+    const getAcceptMessages = useCallback(async () => {
         try {
+            setIsSwitchLoading(true);
+            const response = await axios.get<ApiResponse>('/api/accept-message');
+            setValue('acceptMessage', response.data.isAcceptingMessages);
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiResponse>;
+            const errorMessage = axiosError.response?.data.message || "Failed to fetch message status";
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive"
+            });
+        } finally {
+            setIsSwitchLoading(false);
+        }
+    }, [setValue])
+
+    const getFetchedMessages = useCallback(async (refresh: boolean = false) => {
+        try {
+            console.log("");
             setIsLoading(true);
             setIsRefreshing(true);
             const response = await axios.get('/api/get-messages');
-            console.log("Response: ", response.data);
             setMessages(response.data.message);
+            if (refresh) {
+                toast({
+                    title: "Refreshed",
+                    description: "Showing latest messages"
+                });
+                return;
+            }
             toast({
                 title: "Success",
                 description: "Messages fetched successfully"
@@ -95,14 +121,15 @@ export default function Page() {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }
+    }, [setIsLoading, setMessages]);
 
     const onMessageDelete = async (messageId: string) => {
-        setMessages((prev) => prev.filter(message => message._id !== messageId))
+        setMessages((messages) => messages.filter(message => message._id !== messageId));
     }
 
     useEffect(() => {
         getFetchedMessages();
+        getAcceptMessages();
     }, []);
 
     return (
@@ -115,7 +142,7 @@ export default function Page() {
                 <div className="flex items-center">
                     <input
                         type="text"
-                        value={`http://localhost:3000/feedback/${user?.username}`}
+                        value={profileUrl}
                         disabled
                         className="input input-bordered w-full p-2 mr-2"
                     />
@@ -127,7 +154,7 @@ export default function Page() {
                     {...register("acceptMessage")}
                     checked={acceptMessageValue}
                     onCheckedChange={handleAcceptMessage}
-                    disabled={isLoading}
+                    disabled={isSwitchLoading}
                 />
                 <span>Accept Message: {acceptMessageValue ? "on" : "off"}</span>
             </div>
@@ -135,7 +162,7 @@ export default function Page() {
             <div>
                 <Button
                     variant={'outline'}
-                    onClick={getFetchedMessages}
+                    onClick={() => getFetchedMessages(true)}
                 >
                     {
                         isRefreshing ? (
@@ -150,7 +177,11 @@ export default function Page() {
                 <h2 className="text-lg font-semibold mb-2">Messages</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 mt-5 gap-8">
                     {messages.map((message) => (
-                        <MessageCard key={message._id} message={message} onMessageDelete={onMessageDelete} />
+                        <MessageCard
+                            key={message._id}
+                            message={message}
+                            onMessageDelete={onMessageDelete}
+                        />
                     ))}
                 </div>
             </section>
