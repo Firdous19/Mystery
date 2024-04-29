@@ -123,6 +123,9 @@ export default function SignInPage() {
                                                     {...field}
                                                 />
                                             </FormControl>
+                                            <FormDescription className="text-right">
+                                                <Link href={`/forgot-password`}>forgot password?</Link>
+                                            </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
