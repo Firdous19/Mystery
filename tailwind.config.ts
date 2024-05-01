@@ -21,6 +21,7 @@ const config = {
       screens: {
         'custom': { 'max': '910px' },
         'max-sm': { 'max': '640px' },
+        'max-md': { 'max': '768px' },
       },
       colors: {
         border: "hsl(var(--border))",

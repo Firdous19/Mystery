@@ -30,10 +30,11 @@ export default function LogoutBtn() {
 
     return (
         <Button
+            className="rounded-full px-8"
             variant={'secondary'}
             onClick={handleLogout}
         >
-            logout
+            Logout
         </Button>
     )
 }

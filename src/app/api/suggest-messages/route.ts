@@ -22,6 +22,8 @@ export async function GET(req: Request) {
             prompt,
         });
 
+        console.log(response.toReadableStream());
+
         // Convert the response into a friendly text-stream
         const stream = OpenAIStream(response);
         // Respond with the stream

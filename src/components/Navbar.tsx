@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import LogoutBtn from "./LogoutBtn";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -15,15 +16,15 @@ export default function Navbar() {
         {
             name: "Home",
             path: "/",
-            show: true
+            show: !session
         },
         {
-            name: "SignUp",
+            name: "Signup",
             path: "/signup",
             show: !session
         },
         {
-            name: "SignIn",
+            name: "Login",
             path: "/signin",
             show: !session
         },
@@ -36,7 +37,7 @@ export default function Navbar() {
 
 
     return (
-        <nav className="p-4 md:p-6 shadow-md bg-gray-900 text-white">
+        <nav className="p-4 md:p-6 shadow-md bg-gray-950 text-white">
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
                 <Link href="/" className="text-xl font-bold mb-4 md:mb-0">
                     True Feedback
@@ -53,7 +54,9 @@ export default function Navbar() {
                         routes.map(route => {
                             if (route.show) {
                                 return (
-                                    <Link key={route.name} href={route.path}>
+                                    <Link
+                                        className={`hover:text-gray-300 ${usePathname() === route.path ? 'border-b-2 border-white' : ''} px-2 py-1` }
+                                        key={route.name} href={route.path}>
                                         <span>{route.name}</span>
                                     </Link>
                                 )

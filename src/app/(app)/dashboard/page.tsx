@@ -41,7 +41,7 @@ export default function Page() {
     }
 
     const copyToClipBoard = async () => {
-        await window.navigator.clipboard.writeText(`http://localhost:3000/feedback/${user?.username}`);
+        await window.navigator.clipboard.writeText(`http://localhost:3000/me/${user?.username}`);
 
         toast({
             title: "Link Copied",
